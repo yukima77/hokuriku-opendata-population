@@ -8,6 +8,10 @@
 ## 公開ページ
 https://yukima77.github.io/hokuriku-opendata-population/
 
+## 関連リンク
+- 解説記事（note）：https://note.com/yukima77/n/n7de57a25fd23
+- 紹介動画（YouTube）：https://youtu.be/gLjzQp_2Hww
+
 ## 使い方
 `index.html` をブラウザで開く、または `python -m http.server` で配信するだけです（ビルド不要）。
 
