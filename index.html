@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>北陸3県 人口の推移と将来推計</title>
+<meta name="description" content="北陸経済連合会「データでみる北陸」のオープンデータで、富山・石川・福井の人口を1960年から2050年まで比べるグラフ。">
+<link rel="canonical" href="https://yukima77.github.io/hokuriku-opendata-population/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="北陸3県 人口の推移と将来推計">
+<meta property="og:title" content="北陸3県 人口の推移と将来推計">
+<meta property="og:description" content="富山・石川・福井の人口を1960年から2050年まで比べるグラフ。出典：データでみる北陸（北陸経済連合会）">
+<meta property="og:url" content="https://yukima77.github.io/hokuriku-opendata-population/">
+<meta property="og:image" content="https://yukima77.github.io/hokuriku-opendata-population/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="北陸3県の人口推移の折れ線グラフ（1960〜2050年、2025年以降は点線の推計）">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="北陸3県 人口の推移と将来推計">
+<meta name="twitter:description" content="富山・石川・福井の人口を1960年から2050年まで比べるグラフ。">
+<meta name="twitter:image" content="https://yukima77.github.io/hokuriku-opendata-population/og.png">
+<style>
+:root{--bg:#fafaf7;--fg:#1d1f23;--muted:#5d6470;--card:#fff;--line:#dcdfe4;--accent:#0b5fa5}
+@media (prefers-color-scheme:dark){:root{--bg:#14161a;--fg:#e9eaec;--muted:#a3a9b3;--card:#1c1f25;--line:#343a44;--accent:#6bb3f0}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Hiragino Sans","Yu Gothic UI","Meiryo",system-ui,sans-serif;line-height:1.7}
+main{max-width:920px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:1.5rem;margin:0 0 4px}
+.lead{color:var(--muted);margin:0 0 20px;font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+.controls{display:flex;flex-wrap:wrap;gap:16px 24px;margin-bottom:12px}
+fieldset{border:0;margin:0;padding:0}
+legend{font-size:.8rem;color:var(--muted);padding:0;margin-bottom:4px}
+label{margin-right:12px;white-space:nowrap;cursor:pointer}
+.chartbox{position:relative;height:380px}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{font-weight:600;color:var(--muted);font-size:.8rem}
+.neg{color:#c0392b}
+@media (prefers-color-scheme:dark){.neg{color:#ff8a7a}}
+.legend-note{font-size:.8rem;color:var(--muted);margin:8px 0 0}
+footer{font-size:.8rem;color:var(--muted)}
+footer p{margin:4px 0}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<main>
+  <h1>北陸3県 人口の推移と将来推計</h1>
+  <p class="lead">富山・石川・福井の人口を、1960年から2050年まで並べて見られます。2025年以降は推計値（点線）です。</p>
+
+  <section class="card" aria-label="グラフ">
+    <div class="controls">
+      <fieldset>
+        <legend>表示する指標</legend>
+        <label><input type="radio" name="mode" value="pop" checked> 人口（千人）</label>
+        <label><input type="radio" name="mode" value="index"> 1960年を100とした指数</label>
+        <label><input type="radio" name="mode" value="share"> 全国に占める割合（%）</label>
+      </fieldset>
+      <fieldset id="seriesBox">
+        <legend>表示する地域</legend>
+      </fieldset>
+    </div>
+    <div class="chartbox"><canvas id="chart" role="img" aria-label="北陸3県の人口推移の折れ線グラフ。下の表に同じ数値があります"></canvas></div>
+    <p class="legend-note">実線＝実績（2020年まで）／点線＝推計（2025年以降）</p>
+  </section>
+
+  <section class="card" aria-label="2020年と2050年の比較">
+    <table>
+      <caption style="text-align:left;font-weight:600;margin-bottom:6px">2020年から2050年の変化</caption>
+      <thead><tr><th>地域</th><th>2020年（千人）</th><th>2050年（千人）</th><th>増減率</th><th>人口が最大の年</th></tr></thead>
+      <tbody id="summary"></tbody>
+    </table>
+  </section>
+
+  <footer>
+    <p id="source"></p>
+    <p>出典：<a href="https://hokurikudata.cloudfree.jp/">データでみる北陸</a>（北陸経済連合会）「2-1.北陸３県の人口総数の推移」　©データでみる北陸　<a href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY 4.0</a></p>
+    <p>加工内容：元のExcelの数値をそのままグラフ化し、「指数」「全国に占める割合」「増減率」は元データから計算しました。単位は千人と判断しています（ファイルに単位表記がなく、全国値と3県の合計から判断）。元データの注記には「2025年までは実績値」とありますが、全国の2025年の値が国立社会保障・人口問題研究所（令和5年推計）の推計値と一致するため、本アプリでは2025年以降を推計として表示しています。</p>
+    <p>このアプリは個人が作成したもので、北陸経済連合会が提供・保証するものではありません。</p>
+  </footer>
+</main>
+
+<script src="vendor/chart.umd.min.js"></script>
+<script src="data/population.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

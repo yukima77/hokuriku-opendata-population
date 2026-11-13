@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<!-- OGP画像(og.png)の元。Chromeでヘッドレス撮影して作る:
+  chrome --headless=new --hide-scrollbars --window-size=1200,630 --screenshot=og.png file:///.../tools/og-source.html -->
+<style>
+html,body{margin:0;width:1200px;height:630px;background:#fafaf7;color:#1d1f23;
+  font-family:"Yu Gothic UI","Meiryo","Hiragino Sans",sans-serif;overflow:hidden}
+.wrap{position:relative;width:1200px;height:630px}
+h1{position:absolute;left:64px;top:44px;margin:0;font-size:60px;line-height:1.25;letter-spacing:.01em}
+.sub{position:absolute;left:64px;top:182px;font-size:28px;color:#5d6470}
+svg{position:absolute;left:40px;top:236px}
+.credit{position:absolute;left:64px;bottom:26px;font-size:20px;color:#5d6470}
+.legend{position:absolute;right:64px;top:196px;font-size:26px;display:flex;gap:22px}
+.legend span::before{content:"";display:inline-block;width:18px;height:18px;border-radius:3px;margin-right:8px;vertical-align:-2px;background:var(--c)}
+</style></head>
+<body><div class="wrap">
+<h1>北陸3県 人口の推移と将来推計</h1>
+<div class="sub">1960年から2050年まで、富山・石川・福井を並べて見る</div>
+<div class="legend">
+  <span style="--c:#0072B2">富山県</span><span style="--c:#D55E00">石川県</span><span style="--c:#009E73">福井県</span>
+</div>
+<svg id="svg" width="1120" height="316" viewBox="0 0 1120 316"></svg>
+<div class="credit">出典：データでみる北陸（北陸経済連合会） ©データでみる北陸 CC BY 4.0　／　点線は推計（2025年以降）</div>
+</div>
+<script src="../data/population.js"></script>
+<script>
+(function(){
+  const D = window.POPULATION_DATA, svg = document.getElementById("svg");
+  const COL = {"富山県":"#0072B2","石川県":"#D55E00","福井県":"#009E73"};
+  const W = 1120, H = 316, L = 24, R = 24, T = 12, B = 20;
+  const ymax = 1300, n = D.years.length, li = D.years.indexOf(D.lastActual);
+  const x = i => L + (W - L - R) * i / (n - 1), y = v => T + (H - T - B) * (1 - v / ymax);
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (t, a, p = svg) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); p.appendChild(e); return e; };
+  [0, 400, 800, 1200].forEach(v => el("line", {x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: "#dcdfe4", "stroke-width": 1}));
+  Object.keys(COL).forEach(k => {
+    const s = D.series[k];
+    const pts = (a, b) => s.slice(a, b + 1).map((v, j) => x(a + j) + "," + y(v)).join(" ");
+    el("polyline", {points: pts(0, li), fill: "none", stroke: COL[k], "stroke-width": 5, "stroke-linejoin": "round"});
+    el("polyline", {points: pts(li, n - 1), fill: "none", stroke: COL[k], "stroke-width": 5, "stroke-dasharray": "10 9"});
+  });
+  [1960, 2000, 2050].forEach(yr => {
+    const i = D.years.indexOf(yr);
+    const t = el("text", {x: x(i), y: H - 2, "text-anchor": i === 0 ? "start" : i === n - 1 ? "end" : "middle", "font-size": 20, fill: "#5d6470"});
+    t.textContent = yr + "年";
+  });
+})();
+</script></body></html>
